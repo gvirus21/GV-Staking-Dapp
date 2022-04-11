@@ -17,8 +17,9 @@ contract TokenFarm is Ownable {
         address person;
         uint256 amount;
     }
+
     mapping (uint256 => Stake) public idToStake;
-    mapping(address => bool) public isStaking;
+    mapping(address => Stake[]) public userToStakes;
 
     Stake[] public stakings;
 
@@ -39,12 +40,13 @@ contract TokenFarm is Ownable {
 
         Stake memory _stake = Stake(_id, msg.sender, _amount);
 
-        stakeToken.transferFrom(msg.sender, address(this), _amount);
-
         idToStake[_id] = _stake;
-        isStaking[msg.sender] = true;
+
+        userToStakes[msg.sender].push(_stake);
         stakings.push(_stake);
         stakers.push(msg.sender);
+
+        stakeToken.transferFrom(msg.sender, address(this), _amount);
     }
 
     function issueTokens() public onlyOwner {
@@ -59,11 +61,37 @@ contract TokenFarm is Ownable {
         }
     } 
 
-    function unStake( uint256 stakeId ) public {
+    function unStake( uint256 _stakeId ) public {
+        Stake memory _stake = idToStake[_stakeId];
+        require(isUserCurrentlyStaking(_stake.person), "User is not staking");
+        uint256 _userBalance = _stake.amount;
 
+        require(_stake.person == msg.sender, "Not verified user");
+        require(_userBalance > 0, "User balance must be greater than 0");
+
+        //remove from userToStake mapping
+        for(uint256 index; index < userToStakes[msg.sender].length; index++) {
+            Stake memory _userStake = userToStakes[msg.sender][index];
+            if (_userStake.id == _stakeId ) {
+                delete userToStakes[msg.sender][index];
+            }
+        }
+
+        idToStake[_stakeId].amount = 0;
+
+        //operations
+        stakeToken.transfer(msg.sender, _userBalance);
     }
 
     function calculateReward( uint256 _stakeId, address _recipient ) public returns ( uint256 ) {
 
+    }
+
+    function isUserCurrentlyStaking(address _user) internal view returns (bool) {
+        if (userToStakes[_user].length != 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
