@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 //utils
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "hardhat/console.sol";
 
 contract TokenFarm is Ownable {
 
@@ -16,6 +17,7 @@ contract TokenFarm is Ownable {
         uint256 id;
         address person;
         uint256 amount;
+        uint256 createdAt;
     }
 
     mapping (uint256 => Stake) public idToStake;
@@ -38,7 +40,7 @@ contract TokenFarm is Ownable {
         uint256 _id = _stakeIdCounter.current();
         _stakeIdCounter.increment();
 
-        Stake memory _stake = Stake(_id, msg.sender, _amount);
+        Stake memory _stake = Stake(_id, msg.sender, _amount, block.timestamp);
 
         idToStake[_id] = _stake;
 
@@ -55,7 +57,7 @@ contract TokenFarm is Ownable {
             uint256 id = _stake.id;
             address recipient = _stake.person;
 
-            uint256 rewardAmount = calculateReward(id, recipient);
+            uint256 rewardAmount = calculateReward(id);
 
             gvToken.transfer(recipient, rewardAmount);
         }
@@ -66,6 +68,7 @@ contract TokenFarm is Ownable {
         require(isUserCurrentlyStaking(_stake.person), "User is not staking");
         uint256 _userBalance = _stake.amount;
 
+        require(isStakeDurationOver(_stakeId), "You can't Unstake before 3 days");
         require(_stake.person == msg.sender, "Not verified user");
         require(_userBalance > 0, "User balance must be greater than 0");
 
@@ -83,7 +86,22 @@ contract TokenFarm is Ownable {
         stakeToken.transfer(msg.sender, _userBalance);
     }
 
-    function calculateReward( uint256 _stakeId, address _recipient ) public returns ( uint256 ) {
+    function isStakeDurationOver( uint256 _stakeId ) public view returns (bool) {
+        Stake memory _stake = idToStake[_stakeId];
+        uint256 stakeCreatedAt = _stake.createdAt;
+        uint256 diff = block.timestamp - stakeCreatedAt;
+
+        if ( (diff) * 1 days >= 3 days ) {
+            return true;
+        }
+        return false;
+    }
+
+    function calculateReward( uint256 _stakeId) public view returns ( uint256 ) {
+        Stake memory _stake = idToStake[_stakeId];
+        uint256 amount = _stake.amount;
+
+        return amount;
 
     }
 
