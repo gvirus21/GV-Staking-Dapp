@@ -35,7 +35,7 @@ contract TokenFarm is Ownable {
         stakeToken = IERC20(_stakeToken);
     }
 
-    function stakeTokens(uint256 _amount) public {
+    function stakeTokens(uint256 _amount) public payable {
         require(_amount > 0, "Staking amount must more than 0");
         uint256 _id = _stakeIdCounter.current();
         _stakeIdCounter.increment();
@@ -51,7 +51,7 @@ contract TokenFarm is Ownable {
         stakeToken.transferFrom(msg.sender, address(this), _amount);
     }
 
-    function issueTokens() public onlyOwner {
+    function issueTokens() public onlyOwner payable {
         for(uint256 index; index < stakings.length; index++) {
             Stake memory _stake = stakings[index];
             uint256 id = _stake.id;
@@ -63,7 +63,7 @@ contract TokenFarm is Ownable {
         }
     } 
 
-    function unStake( uint256 _stakeId ) public {
+    function unStake( uint256 _stakeId ) public payable {
         Stake memory _stake = idToStake[_stakeId];
         require(isUserCurrentlyStaking(_stake.person), "User is not staking");
         uint256 _userBalance = _stake.amount;
