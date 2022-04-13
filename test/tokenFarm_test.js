@@ -7,6 +7,8 @@ describe("Token Farm Tests", async () => {
   let stakeTokenAddress;
   let tokenFarmAddress;
 
+  let tokenFarm;
+
   before(async () => {
     let GVToken = await ethers.getContractFactory("GVToken");
     let gvToken = await GVToken.deploy();
@@ -23,7 +25,7 @@ describe("Token Farm Tests", async () => {
     console.log("StakeToken is deployed to: ", stakeTokenAddress);
 
     let TokenFarm = await ethers.getContractFactory("TokenFarm");
-    let tokenFarm = await TokenFarm.deploy(gvTokenAddress, stakeTokenAddress);
+    tokenFarm = await TokenFarm.deploy(gvTokenAddress, stakeTokenAddress);
     await tokenFarm.deployed();
 
     tokenFarmAddress = tokenFarm.address;
@@ -38,5 +40,9 @@ describe("Token Farm Tests", async () => {
       expect(await tokenFarm.gvToken()).to.equal(gvTokenAddress)
       expect(await tokenFarm.stakeToken()).to.equal(stakeTokenAddress)
     });
-   
+    
+    it("Staking 0 eth should revert", async () => {
+        const amount = await ethers.utils.parseEther("0")
+        await expect(tokenFarm.stakeTokens(amount)).to.be.revertedWith('Staking amount must more than 0');
+    })
 });
