@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+// need to figure out how to transfer eth from user to contract in stakeTokens
+
 pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -12,6 +14,8 @@ contract TokenFarm is Ownable {
 
     using Counters for Counters.Counter;
     Counters.Counter private _stakeIdCounter;
+
+    uint256 public customAPY;
 
     struct Stake {
         uint256 id;
@@ -28,27 +32,27 @@ contract TokenFarm is Ownable {
     address[] public stakers;
 
     IERC20 public gvToken;
-    IERC20 public stakeToken;
+    // IERC20 public stakeToken;
 
-    constructor(address _gvToken, address _stakeToken) {
+    constructor(address _gvToken) {
         gvToken = IERC20(_gvToken);
-        stakeToken = IERC20(_stakeToken);
+        customAPY = 100;
     }
 
-    function stakeTokens(uint256 _amount) public payable {
-        require(_amount > 0, "Staking amount must more than 0");
+    function stakeTokens() public payable {
+    
+        require(msg.value > 0, "Staking amount must more than 0");
+
         uint256 _id = _stakeIdCounter.current();
         _stakeIdCounter.increment();
 
-        Stake memory _stake = Stake(_id, msg.sender, _amount, block.timestamp);
+        Stake memory _stake = Stake(_id, msg.sender, msg.value, block.timestamp);
 
         idToStake[_id] = _stake;
 
         userToStakes[msg.sender].push(_stake);
         stakings.push(_stake);
         stakers.push(msg.sender);
-
-        stakeToken.transferFrom(msg.sender, address(this), _amount);
     }
 
     function issueTokens() public onlyOwner payable {
@@ -82,8 +86,7 @@ contract TokenFarm is Ownable {
 
         idToStake[_stakeId].amount = 0;
 
-        //operations
-        stakeToken.transfer(msg.sender, _userBalance);
+       payable(msg.sender).transfer(_userBalance);
     }
 
     function isStakeDurationOver( uint256 _stakeId ) public view returns (bool) {
@@ -99,7 +102,7 @@ contract TokenFarm is Ownable {
 
     function calculateReward( uint256 _stakeId) public view returns ( uint256 ) {
         Stake memory _stake = idToStake[_stakeId];
-        uint256 amount = _stake.amount;
+        uint256 amount = ( _stake.amount * customAPY ) / 100000;
 
         return amount;
 
@@ -112,4 +115,14 @@ contract TokenFarm is Ownable {
             return false;
         }
     }
+
+    function changeAPY(uint256 _value) public onlyOwner {
+        require(
+            _value > 0,
+            "APY value has to be more than 0, try 100 for (0.100% daily) instead"
+        );
+        customAPY = _value;
+
+    }
+    
 }
