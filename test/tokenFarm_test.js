@@ -8,6 +8,7 @@ describe("Token Farm Tests", async () => {
   let gvToken;
   let tokenFarm;
   let address1;
+  let address2;
 
   before(async () => {
     let GVToken = await ethers.getContractFactory("GVToken");
@@ -26,7 +27,7 @@ describe("Token Farm Tests", async () => {
   });
 
   beforeEach(async () => {
-    [address1] = await ethers.getSigners();
+    [address1, address2] = await ethers.getSigners();
     const totalGVTokens = await gvToken.totalSupply();
     await gvToken.transfer(address1.address, totalGVTokens);
 
@@ -89,5 +90,21 @@ describe("Token Farm Tests", async () => {
     const idToStakeValue = await tokenFarm.idToStake(firstId);
     expect(idToStakeValue.amount).to.equal(ethers.utils.parseEther("0"))
     
+  })
+
+  it("Should revert if unstake called by other user", async () => {
+        const tx = await tokenFarm
+          .connect(address1)
+          .stakeTokens({ value: ethers.utils.parseEther("1.0") });
+        await tx.wait();
+
+        const firstStake = await tokenFarm.stakings(0);
+        expect(firstStake.amount).to.equal(ethers.utils.parseEther("1.0"));
+
+    const firstId = firstStake.id;
+    
+    await expect(
+      tokenFarm.connect(address2).unStake(firstId)
+    ).to.be.revertedWith("Not verified user");
   })
 });
