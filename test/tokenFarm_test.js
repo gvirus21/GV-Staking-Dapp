@@ -29,6 +29,8 @@ describe("Token Farm Tests", async () => {
     [address1] = await ethers.getSigners();
     const totalGVTokens = await gvToken.totalSupply();
     await gvToken.transfer(address1.address, totalGVTokens);
+
+
   });
 
   it("TokenFarm Should deploy GVToken", async () => {
@@ -68,5 +70,24 @@ describe("Token Farm Tests", async () => {
     expect(idToStakeValue.id).to.equal(firstStake.id)
     expect(idToStakeValue.person).to.equal(firstStake.person)
     expect(idToStakeValue.amount).to.equal(firstStake.amount)
+  })
+
+  it("Should unstake if provided correct stake Id by owner", async () => {
+    const tx = await tokenFarm
+      .connect(address1)
+      .stakeTokens({ value: ethers.utils.parseEther("1.0") });
+    await tx.wait();
+
+    const firstStake = await tokenFarm.stakings(0);
+    expect(firstStake.amount).to.equal(ethers.utils.parseEther("1.0"));
+
+    const firstId = firstStake.id;
+
+    const unstakeTx = await tokenFarm.connect(address1).unStake(firstId);
+    await unstakeTx.wait()
+
+    const idToStakeValue = await tokenFarm.idToStake(firstId);
+    expect(idToStakeValue.amount).to.equal(ethers.utils.parseEther("0"))
+    
   })
 });
