@@ -5,7 +5,7 @@ describe("Token Farm Tests", async () => {
   let gvTokenAddress;
   let tokenFarmAddress;
 
-  let gvToken
+  let gvToken;
   let tokenFarm;
   let address1;
 
@@ -28,10 +28,31 @@ describe("Token Farm Tests", async () => {
   beforeEach(async () => {
     [address1] = await ethers.getSigners();
     const totalGVTokens = await gvToken.totalSupply();
-    await gvToken.transfer(address1.address, totalGVTokens)
+    await gvToken.transfer(address1.address, totalGVTokens);
   });
 
   it("TokenFarm Should deploy GVToken", async () => {
     expect(await tokenFarm.gvToken()).to.equal(gvTokenAddress);
+  });
+
+  it("Staking 0 eth should revert", async () => {
+    await expect(tokenFarm.connect(address1).stakeTokens()).to.be.revertedWith(
+      "Staking amount must more than 0"
+    );
+  });
+
+  it("Staking 1 Eth should update all the required arrays with correct amount", async () => {
+    const tx = await tokenFarm
+      .connect(address1)
+      .stakeTokens({ value: ethers.utils.parseEther("1.0") });
+    
+    await tx.wait()
+
+    const firstStake = await tokenFarm.stakings(0);
+    expect(firstStake.amount).to.equal(ethers.utils.parseEther("1.0"))
+    expect(firstStake.person).to.equal(address1.address)
+
+    const firstStaker = await tokenFarm.stakers(0);
+    expect(firstStaker).to.equal(address1.address)
   });
 });
