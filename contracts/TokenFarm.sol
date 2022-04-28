@@ -50,6 +50,8 @@ contract TokenFarm is Ownable {
         userToStakes[msg.sender].push(_stake);
         stakings.push(_stake);
         stakers.push(msg.sender);
+
+        console.log("user-stakes id: %s", userToStakes[msg.sender][0].id);
     }
 
     function unStake( uint256 _stakeId ) public payable {

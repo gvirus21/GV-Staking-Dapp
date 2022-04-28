@@ -55,4 +55,18 @@ describe("Token Farm Tests", async () => {
     const firstStaker = await tokenFarm.stakers(0);
     expect(firstStaker).to.equal(address1.address)
   });
+
+  it("Staking 1 Eth should update all the required Mappings with correct inputs", async () => {
+    const tx = await tokenFarm.connect(address1).stakeTokens({ value: ethers.utils.parseEther("1.0") })
+    await tx.wait()
+
+    const firstStake = await tokenFarm.stakings(0)
+    const firstId = firstStake.id
+
+    const idToStakeValue = await tokenFarm.idToStake(firstId)
+
+    expect(idToStakeValue.id).to.equal(firstStake.id)
+    expect(idToStakeValue.person).to.equal(firstStake.person)
+    expect(idToStakeValue.amount).to.equal(firstStake.amount)
+  })
 });
