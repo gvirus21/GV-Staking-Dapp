@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { TransactionContext } from "../context/TransactionContext";
 
 const style = {
   wrapper: "flex justify-between items-center px-20 h-24 ",
@@ -9,13 +10,20 @@ const style = {
 };
 
 const Header = () => {
+  const { connectWallet, isConnected } = useContext(TransactionContext);
 
-    
   return (
     <nav className={style.wrapper}>
       <h1 className={style.logo}>Gvstake</h1>
-      <p className={style.accountLabel}>0x89cU...9vBc</p>
-      <button className={style.button}> Connect </button>
+
+      {isConnected ? (
+        <p className={style.accountLabel}>0x89cU...9vBc</p>
+      ) : (
+        <button className={style.button} onClick={() => connectWallet()}>
+          {" "}
+          Connect{" "}
+        </button>
+      )}
     </nav>
   );
 };
