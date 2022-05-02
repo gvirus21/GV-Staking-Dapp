@@ -34,6 +34,19 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
+  const handleReload = async () => {
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({
+          method: "eth_accounts",
+        });
+
+        if (accounts[0] != undefined) {
+          setCurrentAccount(accounts[0]);
+          setIsConnected(true);
+        }
+      }
+    };
+
   const stakeETH = async () => {
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -42,15 +55,13 @@ export const TransactionProvider = ({ children }) => {
 
     const stakeTx = await stakeContract.stakeTokens({ value: ethers.utils.parseEther(stakeAmount.toString()) });
     await stakeTx.wait()
-
-    console.log('stake Complete')
-
   };
 
   return (
     <TransactionContext.Provider
       value={{
         currentAccount,
+        handleReload,
         connectWallet,
         isConnected,
         stakeETH,

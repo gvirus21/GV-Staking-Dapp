@@ -11,15 +11,22 @@ const style = {
 };
 
 const Header = () => {
-  const { currentAccount, connectWallet, isConnected } =
+  const { currentAccount, connectWallet, handleReload, isConnected } =
     useContext(TransactionContext);
+
+  useEffect(() => {
+    handleReload();
+  }, []);
 
   return (
     <nav className={style.wrapper}>
       <h1 className={style.logo}>Gvstake</h1>
 
       {isConnected ? (
-        <p className={style.accountLabel}>{`${currentAccount.substr(0, 5)}...${currentAccount.substr(-5)}`}</p>
+        <p className={style.accountLabel}>{`${currentAccount.substr(
+          0,
+          5
+        )}...${currentAccount.substr(-5)}`}</p>
       ) : (
         <button className={style.button} onClick={() => connectWallet()}>
           {" "}
