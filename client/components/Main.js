@@ -1,4 +1,5 @@
-import React, { useStaete, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { TransactionContext, TransactionProvider } from "../context/TransactionContext";
 
 const style = {
   wrapper: "bg-gray-700 h-screen py-64 flex justify-center items-center -mt-24",
@@ -9,6 +10,11 @@ const style = {
 };
 
 const Main = () => {
+
+  const {stakeAmount, setStakeAmount, stakeETH} = useContext(TransactionContext)
+  
+
+ 
   return (
     <div className={style.wrapper}>
       <div className={style.innerContainer}>
@@ -18,8 +24,10 @@ const Main = () => {
             min="0"
             max="100"
             className={style.input}
+            value={stakeAmount}
+            onChange={(e) => setStakeAmount(e.target.value)}
           />
-          <button className={style.button}>Stake</button>
+          <button className={style.button} onClick={stakeETH}>Stake</button>
         </div>
         <button className={style.button}>Unstake</button>
         <button className={style.button}>
