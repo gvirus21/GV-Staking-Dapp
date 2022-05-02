@@ -3,11 +3,10 @@ const hre = require("hardhat");
 async function main() {
   hre.run("compile");
 
-  const gvTokenAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const stakeTokenAddres = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+  const gvTokenAddress = "0xE3DE370D11105c3C1B5D65Fa8f3e77a634367494";
 
   const TokenFarm = await hre.ethers.getContractFactory("TokenFarm");
-  const tokenFarm = await TokenFarm.deploy(gvTokenAddress, stakeTokenAddres);
+  const tokenFarm = await TokenFarm.deploy(gvTokenAddress);
 
   await tokenFarm.deployed();
 

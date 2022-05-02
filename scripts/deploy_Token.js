@@ -9,15 +9,6 @@ const main = async () => {
   await gvToken.deployed();
 
   console.log("GVToken deployed to: ", gvToken.address);
-
-  //deploying StakeToken
-
-  const StakeToken = await hre.ethers.getContractFactory("StakeToken");
-  const stakeToken = await StakeToken.deploy();
-
-  await stakeToken.deployed();
-
-  console.log("StakeToken deployed to: ", stakeToken.address);
 };
 
 main()

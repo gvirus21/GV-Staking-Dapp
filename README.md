@@ -13,3 +13,5 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
+token: 0xE3DE370D11105c3C1B5D65Fa8f3e77a634367494
+tokenFarm: 0xD85799D72d096a7609fF7AA9623Dbd9dC19e4d9B
