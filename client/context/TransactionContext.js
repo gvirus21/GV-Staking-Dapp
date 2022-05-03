@@ -57,6 +57,26 @@ export const TransactionProvider = ({ children }) => {
     await stakeTx.wait()
   };
 
+  const unstakeETH = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const stakeContract = new ethers.Contract(
+      tokenFarmAddress,
+      tokenFarmABI,
+      signer
+    );
+    try {
+      const firstStake = await stakeContract.userToStakes(currentAccount, 0)
+      const firstStakeId = firstStake.id._hex
+      
+      const unstakeTx = await stakeContract.unStake(firstStakeId)
+      await unstakeTx.wait()
+
+    } catch (err) {
+      console.log("unstake ERROR: ", err)
+    }
+  }
+
   return (
     <TransactionContext.Provider
       value={{
@@ -64,9 +84,10 @@ export const TransactionProvider = ({ children }) => {
         handleReload,
         connectWallet,
         isConnected,
-        stakeETH,
         stakeAmount,
         setStakeAmount,
+        stakeETH,
+        unstakeETH,
       }}
     >
       {children}
