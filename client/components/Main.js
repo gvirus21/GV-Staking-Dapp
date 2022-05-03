@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  TransactionContext,
-  TransactionProvider,
-} from "../context/TransactionContext";
+import { TransactionContext } from "../context/TransactionContext";
 
 const style = {
-  wrapper: " h-screen py-64 flex justify-center items-center -mt-24 bg-gradient-to-r  from-blue-800 to-blue-900",
-  formContainer: "h-40 flex flex-col justify-between ",
-  // inputContainer: "flex",
-  input: "px-3 py-1 text-xl mx-5 rounded-xl w-32",
-  button: "px-3 py-1 bg-gray-300 rounded-md",
+  wrapper:
+    " h-screen flex flex-col justify-center items-center bg-gradient-to-r  from-gray-100 bg-slate-50",
+  innerContainer: "",
+  heading: "flex flex-col items-center h-32 mb-10 -mt-20",
+  para: "text-4xl font-semibold mb-10",
+  formContainer: "h-36 flex flex-col justify-between items-center",
+  input: "px-3 text-3xl mx-5 rounded-xl w-40 h-16 border-violet-700 border-2 ",
+  button:
+    "w-40 h-12 bg-violet-600 rounded-md text-white text-xl hover:bg-violet-400",
 };
 
 const Main = () => {
@@ -17,8 +18,6 @@ const Main = () => {
     stakeAmount,
     setStakeAmount,
     stakeETH,
-    unstakeETH,
-    issueRewards,
     setCurrentAccount,
   } = useContext(TransactionContext);
 
@@ -32,8 +31,12 @@ const Main = () => {
 
   return (
     <div className={style.wrapper}>
-      <div className={style.formContainer}>
-        <div className={style.inputContainer}>
+      <div className={style.innerContainer}>
+        <div className={style.heading}>
+          <h1 className={style.para}>Stake Your ETH</h1>
+          <p>You Will recieve GV token as reward</p>
+        </div>
+        <div className={style.formContainer}>
           <input
             type="Number"
             min="0"
@@ -46,12 +49,6 @@ const Main = () => {
             Stake
           </button>
         </div>
-        <button className={style.button} onClick={unstakeETH}>
-          Unstake
-        </button>
-        <button className={style.button} onClick={issueRewards}>
-          Issue rewards
-        </button>
       </div>
     </div>
   );
