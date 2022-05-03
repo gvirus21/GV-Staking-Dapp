@@ -11,7 +11,8 @@ const style = {
 
 const Main = () => {
 
-  const {stakeAmount, setStakeAmount, stakeETH, unstakeETH} = useContext(TransactionContext)
+  const { stakeAmount, setStakeAmount, stakeETH, unstakeETH, issueRewards } =
+    useContext(TransactionContext);
   
 
  
@@ -30,7 +31,7 @@ const Main = () => {
           <button className={style.button} onClick={stakeETH}>Stake</button>
         </div>
         <button className={style.button} onClick={unstakeETH}>Unstake</button>
-        <button className={style.button}>
+        <button className={style.button} onClick={issueRewards}>
           Issue rewards
         </button>
       </div>

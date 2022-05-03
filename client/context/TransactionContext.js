@@ -35,17 +35,17 @@ export const TransactionProvider = ({ children }) => {
   };
 
   const handleReload = async () => {
-      if (window.ethereum) {
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
-        });
+    if (window.ethereum) {
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
 
-        if (accounts[0] != undefined) {
-          setCurrentAccount(accounts[0]);
-          setIsConnected(true);
-        }
+      if (accounts[0] != undefined) {
+        setCurrentAccount(accounts[0]);
+        setIsConnected(true);
       }
-    };
+    }
+  };
 
   const stakeETH = async () => {
 
@@ -77,6 +77,24 @@ export const TransactionProvider = ({ children }) => {
     }
   }
 
+  const issueRewards = async () => {
+     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const stakeContract = new ethers.Contract(
+      tokenFarmAddress,
+      tokenFarmABI,
+      signer
+    );
+    try {
+      const issueTokensTx = await stakeContract.issueTokens();
+      await issueTokensTx.wait();
+
+      console.log("issue tokens success")
+    } catch (err) {
+      console.log("unstake ERROR: ", err);
+    }
+  }
+
   return (
     <TransactionContext.Provider
       value={{
@@ -88,6 +106,7 @@ export const TransactionProvider = ({ children }) => {
         setStakeAmount,
         stakeETH,
         unstakeETH,
+        issueRewards,
       }}
     >
       {children}
