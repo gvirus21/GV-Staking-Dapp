@@ -3,7 +3,7 @@ import { TransactionContext } from "../context/TransactionContext";
 
 const style = {
   wrapper:
-    "flex justify-between items-center px-20 h-24 sticky top-0 z-30 bg-white ",
+    "flex justify-between items-center px-20 h-24 sticky top-0 z-30 ",
   logo: "font-semibold text-2xl",
   accountLabel: "text-white bg-violet-300 px-6 py-2 rounded-full",
   button:

@@ -5,9 +5,9 @@ import {
 } from "../context/TransactionContext";
 
 const style = {
-  wrapper: "bg-gray-700 h-screen py-64 flex justify-center items-center -mt-24",
-  innerContainer: "h-40 flex flex-col justify-between ",
-  inputContainer: "flex",
+  wrapper: " h-screen py-64 flex justify-center items-center -mt-24 bg-gradient-to-r  from-blue-800 to-blue-900",
+  formContainer: "h-40 flex flex-col justify-between ",
+  // inputContainer: "flex",
   input: "px-3 py-1 text-xl mx-5 rounded-xl w-32",
   button: "px-3 py-1 bg-gray-300 rounded-md",
 };
@@ -32,7 +32,7 @@ const Main = () => {
 
   return (
     <div className={style.wrapper}>
-      <div className={style.innerContainer}>
+      <div className={style.formContainer}>
         <div className={style.inputContainer}>
           <input
             type="Number"
