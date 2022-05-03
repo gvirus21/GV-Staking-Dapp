@@ -99,6 +99,7 @@ export const TransactionProvider = ({ children }) => {
     <TransactionContext.Provider
       value={{
         currentAccount,
+        setCurrentAccount,
         handleReload,
         connectWallet,
         isConnected,
