@@ -7,7 +7,7 @@ import {useRouter} from 'next/router'
   
 const style = {
   wrapper:
-    "flex justify-between items-center w-screen px-20 h-24 absolute top-0 bg-slate-50",
+    "flex justify-between items-center w-screen px-20 h-24 absolute top-0 ",
   logo: "font-bold text-2xl font-mono text-indigo-700",
   accountLabel: "text-white bg-violet-500 px-3 py-2 rounded-2xl",
   button:
